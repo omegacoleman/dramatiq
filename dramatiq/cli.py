@@ -443,7 +443,7 @@ def main(args=None):  # noqa
                 break
 
             else:
-                retcode = max(retcode, proc.exitcode)
+                retcode = retcode or proc.exitcode
 
     for pipe in [parent_read_pipe, parent_write_pipe, *worker_pipes]:
         pipe.close()
@@ -462,4 +462,4 @@ def main(args=None):  # noqa
             return os.execvp(sys.executable, ["python", "-m", "dramatiq", *sys.argv[1:]])
         return os.execvp(sys.argv[0], sys.argv)
 
-    return retcode
+    return RET_KILLED if retcode < 0 else retcode
